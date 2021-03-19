@@ -5,8 +5,6 @@
     EntryPhrase    db "Welcome to the club, buddy. *slap*$"
     FailurePhrase  db "Intruder detected! Your punisment$"
 
-    passwordbuffer db 20 dup(0) 
-
     ;jmpTable    dw WrongJmp1 
     ;            dw WrongJmp6
     ;            dw WrongJmp5
@@ -14,6 +12,9 @@
     ;RightJump   dw offset StrangeJmp2
     ;            dw WrongJmp2
     ;            dw WrongJmp4 
+
+    passwordbuffer db 20 dup(0) 
+
 
 
 
@@ -59,8 +60,8 @@ EnterHandler proc
     lea bx, passwordbuffer
 
     xor cx, cx
-    xor dx, dx
-    mov dx, 'J'
+    xor di, di
+    mov di, 'J'
     ;mov dx, offset passwordbuffer
 
     HandleCycle:
@@ -74,7 +75,7 @@ EnterHandler proc
         ;xor bx, bx
         ;mov al, [dx]
         cmp al, enterASCII
-        je StrangeJmp1
+        je funcExit
 
         mov [bx], al
 		inc bx
@@ -93,7 +94,7 @@ PasswordCompare:
     xor ax, ax 
     mov al, [bx] 
     inc bx
-    cmp ax, dx
+    cmp ax, di
     ret
 
 Failure proc
@@ -110,21 +111,21 @@ Failure endp
 ;very strange jumps
 
 StrangeJmp2:
-    mov dx, '2'
+    mov di, '2'
     jmp next1
     next1:
-    mov dx, 'o'
+    mov di, 'o'
     call PasswordCompare
     je StrangeJmp3
     jmp Failure
 
 StrangeJmp1:
-    xor dx,dx
+    xor di,di
     mov bx, offset passwordbuffer
-    mov dx, '3'
+    mov di, '3'
     jmp next10
     next10:
-    mov dx, 'J'
+    mov di, 'J'
     
     call PasswordCompare
     je StrangeJmp2
@@ -132,36 +133,36 @@ StrangeJmp1:
 
 
 StrangeJmp4:
-    mov dx, 'b'
+    mov di, 'b'
     jmp next2
     next2:
-    mov dx, 'a'
+    mov di, 'a'
     call PasswordCompare
     je StrangeJmp5
     jmp Failure
 
 StrangeJmp3:
-    mov dx, 'z'
+    mov di, 'z'
     jmp next3
     next3:
-    mov dx, 'y'
+    mov di, 'y'
     jmp next4
     next4:
-    mov dx, 't'
+    mov di, 't'
     call PasswordCompare
     je StrangeJmp4
     jmp Failure
 
 StrangeJmp5:
-    mov dx, 'r'
+    mov di, 'r'
     call PasswordCompare
     je StrangeJmp6
     call Failure
 
 StrangeJmp6:
-    push dx    ; rubbish
-    pop dx
-    mov dx, 'o'
+    push di    ; rubbish
+    pop di
+    mov di, 'o'
     call PasswordCompare
     je FinalJmp
     jmp Failure
